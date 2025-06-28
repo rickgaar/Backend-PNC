@@ -1,0 +1,62 @@
+package com.pnc.backend.controller;
+
+import com.pnc.backend.dto.GeneralResponse;
+import com.pnc.backend.dto.request.examen.ExamenRequest;
+import com.pnc.backend.dto.request.examen.ExamenUpdateRequest;
+import com.pnc.backend.dto.request.usuarioxexamen.UserXExamRequest;
+import com.pnc.backend.dto.request.usuarioxexamen.UserXExamUpdateRequest;
+import com.pnc.backend.service.ExamenService;
+import com.pnc.backend.service.impl.UserXExamServiceImpl;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.time.LocalDate;
+
+@RestController
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@RequestMapping("/api/usuarioxexamen")
+public class UsuarioXExamenController {
+    private final UserXExamServiceImpl userXExamService;
+
+    @Autowired
+    public UsuarioXExamenController(UserXExamServiceImpl userXExamService) {
+        this.userXExamService = userXExamService;
+    }
+
+
+    @PostMapping()
+    public ResponseEntity<GeneralResponse> saveUserXExam(@RequestBody @Valid UserXExamRequest userXExamRequest,@RequestHeader("Authorization") String authHeader) {
+
+        return buildResponse("Exam begin", HttpStatus.CREATED, userXExamService.save(userXExamRequest));
+    }
+
+    @PutMapping()
+    public ResponseEntity<GeneralResponse> updateUserXExam(@RequestBody @Valid UserXExamUpdateRequest userXExamUpdateRequest,@RequestHeader("Authorization") String authHeader) {
+
+        return buildResponse("Exam End", HttpStatus.OK, userXExamService.update(userXExamUpdateRequest));
+    }
+
+    @GetMapping("/{idMateria}/{idUsuario}/{idExamen}")
+    public ResponseEntity<GeneralResponse> getUserExamMateria(@PathVariable Long idMateria,@PathVariable Long idUsuario,@PathVariable Long idExamen,@RequestHeader("Authorization") String authHeader ) {
+        return buildResponse("Exam found", HttpStatus.OK, userXExamService.findByUsuarioIdAndExamenMateriaIdAndExamenId(idUsuario,idMateria,idExamen));
+    }
+    @GetMapping("/{idMateria}/{idUsuario}")
+    public ResponseEntity<GeneralResponse> getUserMateria(@PathVariable Long idMateria,@PathVariable Long idUsuario,@RequestHeader("Authorization") String authHeader ) {
+        return buildResponse("Exams found", HttpStatus.OK, userXExamService.findByUsuarioIdAndExamenMateriaId(idUsuario,idMateria));
+    }
+
+    public ResponseEntity<GeneralResponse> buildResponse(String message, HttpStatus status, Object data) {
+        String uri = ServletUriComponentsBuilder.fromCurrentRequestUri().build().getPath();
+        return ResponseEntity.status(status).body(GeneralResponse.builder()
+                .message(message)
+                .status(status.value())
+                .data(data)
+                .uri(uri)
+                .time(LocalDate.now())
+                .build());
+    }
+}
