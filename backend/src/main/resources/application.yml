@@ -3,9 +3,9 @@ spring:
     name: backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/learnsy
+    url: jdbc:postgresql://switchyard.proxy.rlwy.net:22557/railway
     username: postgres
-    password: admin
+    password: QpoZkhkMImwEBrcblGPWombDbCsllUvn
 
   jpa:
     show-sql: true
