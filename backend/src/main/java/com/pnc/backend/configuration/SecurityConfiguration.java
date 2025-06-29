@@ -33,19 +33,19 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/**").permitAll() //Permits urls to be public, no authorization needed
+                            .requestMatchers("/api/").permitAll() //Permits urls to be public, no authorization needed
                             .anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
-
         http.exceptionHandling(exception ->
                 exception.authenticationEntryPoint(jwtAuth));
-
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -58,13 +58,23 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
+
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://learnsy-three.vercel.app"));
+
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
         configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        configuration.setAllowCredentials(true);
+
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+
+        configuration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/", configuration);
         return source;
     }
 }
