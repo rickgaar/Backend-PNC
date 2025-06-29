@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 @RestController
-@CrossOrigin(origins = "https://learnsy-three.vercel.app/", allowCredentials = "true")
+@CrossOrigin(origins = "https://learnsy-three.vercel.app", allowCredentials = "true")
 @RequestMapping("/api/tema")
 public class TemaController {
     @Autowired

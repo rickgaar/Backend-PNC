@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.time.LocalDate;
 
 @RestController
-@CrossOrigin(origins = "https://learnsy-three.vercel.app/", allowCredentials = "true")
+@CrossOrigin(origins = "https://learnsy-three.vercel.app", allowCredentials = "true")
 @RequestMapping("/api/question")
 public class PreguntaOpcionMultipleController {
     private final PreguntaOpcionMultipleService preguntaOpcionMultipleService;
