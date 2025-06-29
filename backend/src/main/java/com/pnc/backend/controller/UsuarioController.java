@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(origins = "https://learnsy-three.vercel.app/", allowCredentials = "true")
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UsuarioController {
