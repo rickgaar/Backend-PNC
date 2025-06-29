@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
-@CrossOrigin(origins = "*", allowCredentials = "true")
+@CrossOrigin(origins = "https://learnsy-three.vercel.app", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
