@@ -6,6 +6,7 @@ import com.pnc.backend.dto.request.examen.ExamenUpdateRequest;
 import com.pnc.backend.dto.request.usuarioxexamen.UserXExamRequest;
 import com.pnc.backend.dto.request.usuarioxexamen.UserXExamUpdateRequest;
 import com.pnc.backend.dto.response.usuario.UsuarioResponse;
+import com.pnc.backend.exceptions.UserNotTheSameException;
 import com.pnc.backend.security.JwtTokenProvider;
 import com.pnc.backend.service.ExamenService;
 import com.pnc.backend.service.UsuarioService;
