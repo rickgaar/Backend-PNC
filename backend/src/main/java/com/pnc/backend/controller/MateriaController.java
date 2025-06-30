@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -42,6 +43,7 @@ public class MateriaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> getMaterias(@RequestHeader("Authorization") String authHeader) {
         List<MateriaResponse> materias = materiaService.findAll();
         if (materias.isEmpty()) {
@@ -51,17 +53,20 @@ public class MateriaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> saveMateria(@RequestBody @Valid MateriaRequest materia, @RequestHeader("Authorization") String authHeader){
         return buildResponse("Materia creada exitosamente", HttpStatus.CREATED, materiaService.save(materia));
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> updateMateria(@RequestBody @Valid MateriaUpdateRequest materia, @RequestHeader("Authorization") String authHeader){
         materiaService.findById(materia.getId());
         return buildResponse("Materia actualizada", HttpStatus.OK, materiaService.update(materia));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> deleteMateria(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
         MateriaResponse materia = materiaService.findById(id);
         materiaService.delete(id);
@@ -69,35 +74,41 @@ public class MateriaController {
     }
 
     @PatchMapping("/visibility/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> toggleVisibility(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
         return buildResponse("Visibilidad actualizada", HttpStatus.OK, materiaService.toggleVisibility(id));
     }
 
     @GetMapping("/{id}/exams")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> getExams(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         List<ExamenResponse> exams = materiaService.findExams(id);
         return buildResponse("Exams found", HttpStatus.OK, exams);
     }
 
     @GetMapping("/{id}/temas")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> getTemas(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         List<TemaResponse> temas = materiaService.findTemas(id);
         return buildResponse("Temas found", HttpStatus.OK, temas);
     }
 
     @PostMapping("/{idMateria}/usuario/{idUsuario}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> addUser( @PathVariable Long idMateria, @PathVariable Long idUsuario, @RequestHeader("Authorization") String authHeader) {
         materiaService.addUser(idMateria, idUsuario);
         return buildResponse("Usuario agregado a la materia exitosamente", HttpStatus.OK, null);
     }
 
     @DeleteMapping("/{idMateria}/usuario/{idUsuario}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> removeUser(@PathVariable Long idMateria, @PathVariable Long idUsuario, @RequestHeader("Authorization") String authHeader) {
         materiaService.removeUser(idMateria, idUsuario);
         return buildResponse("Usuario eliminado de la materia exitosamente", HttpStatus.OK, null);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> getMateriaDetails(@PathVariable Long id, @RequestHeader("Authorization") String authHeader){
         MateriaResponse response = materiaService.findWithDetails(id);
         return buildResponse("Materia encontrada exitosamente", HttpStatus.OK, response);

@@ -5,26 +5,30 @@ import com.pnc.backend.dto.request.examen.ExamenUpdateRequest;
 import com.pnc.backend.dto.response.examen.ExamenResponse;
 import com.pnc.backend.entities.Examen;
 import com.pnc.backend.entities.Materia;
+import com.pnc.backend.entities.UserXExam;
 import com.pnc.backend.exceptions.ExamenNotFoundException;
 import com.pnc.backend.exceptions.MateriaNotFoundException;
 import com.pnc.backend.repository.ExamRepository;
 import com.pnc.backend.repository.MateriaRepository;
+import com.pnc.backend.repository.UserXExamRepository;
 import com.pnc.backend.service.ExamenService;
 import com.pnc.backend.utils.mappers.ExamenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ExamenServiceImpl implements ExamenService {
     private final ExamRepository examRepository;
     private final MateriaRepository materiaRepository;
-
+    private final UserXExamRepository userXExamRepository;
     @Autowired
-    public ExamenServiceImpl(ExamRepository examRepository, MateriaRepository materiaRepository) {
+    public ExamenServiceImpl(ExamRepository examRepository, MateriaRepository materiaRepository, UserXExamRepository userXExamRepository) {
         this.examRepository = examRepository;
         this.materiaRepository = materiaRepository;
+        this.userXExamRepository = userXExamRepository;
     }
 
     @Override
@@ -50,6 +54,12 @@ public class ExamenServiceImpl implements ExamenService {
 
     @Override
     public void delete(Long id) {
+        Optional<List<UserXExam>> userXExams=userXExamRepository.findByExamenId(id);
+        if(!userXExams.isEmpty()){
+            userXExams.get().forEach(userXExamRepository::delete
+            );
+        }
+
         examRepository.deleteById(id);
     }
 

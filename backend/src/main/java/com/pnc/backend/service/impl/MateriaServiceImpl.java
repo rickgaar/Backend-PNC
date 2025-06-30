@@ -38,8 +38,14 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     @Transactional
     public MateriaResponse save(MateriaRequest materia) {
+        Optional<Materia> materiaExistente = materiaRepository.findByNombreIgnoreCase(materia.getNombre());
+        if (materiaExistente.isPresent()) {
+            throw new DuplicatedFieldException("Ya existe una materia con el nombre: " + materia.getNombre());
+        }
+
         return MateriaMapper.toDTO(materiaRepository.save(MateriaMapper.toEntityCreate(materia)));
     }
+
 
     @Override
     public void delete(Long id) {
@@ -104,7 +110,13 @@ public class MateriaServiceImpl implements MateriaService {
     @Override
     public MateriaResponse update(MateriaUpdateRequest materia) {
         Materia materiaExistente = materiaRepository.findById(materia.getId())
-                .orElseThrow(() -> new MateriaNotFoundException("Materia no encotrada"));
+                .orElseThrow(() -> new MateriaNotFoundException("Materia no encontrada"));
+
+        Optional<Materia> materiaConMismoNombre = materiaRepository.findByNombreIgnoreCase(materia.getNombre());
+
+        if (materiaConMismoNombre.isPresent() && materiaConMismoNombre.get().getId() != materia.getId()) {
+            throw new DuplicatedFieldException("Ya existe otra materia con el nombre: " + materia.getNombre());
+        }
 
         materiaExistente.setNombre(materia.getNombre());
         materiaExistente.setImagen(materia.getImagen());

@@ -6,6 +6,8 @@ import com.pnc.backend.dto.response.tema.FileResponse;
 import com.pnc.backend.dto.response.tema.TemaResponse;
 import com.pnc.backend.entities.Materia;
 import com.pnc.backend.entities.Tema;
+import com.pnc.backend.exceptions.FileNotFoundException;
+import com.pnc.backend.exceptions.FileNotSupportedException;
 import com.pnc.backend.exceptions.MateriaNotFoundException;
 import com.pnc.backend.exceptions.TemaNotFoundException;
 import com.pnc.backend.repository.MateriaRepository;
@@ -69,7 +71,7 @@ public class TemaServiceImpl implements TemaService {
 
         assert archivo != null;
         if (!Objects.equals(archivo.getContentType(), "application/pdf")) {
-            throw new IllegalArgumentException("El archivo debe ser un PDF");
+            throw new FileNotSupportedException("Solo se admiten archivos tipo pdf");
         }
 
         String nombreArchivo = archivo.getOriginalFilename();
@@ -97,7 +99,12 @@ public class TemaServiceImpl implements TemaService {
         }
 
         Path rutaArchivo = Paths.get(tema.get().getFilePath());
-        return Files.readAllBytes(rutaArchivo);
+
+        byte[] file = Files.readAllBytes(rutaArchivo);
+        if (file.length == 0){
+            throw new FileNotFoundException("El archivo no existe");
+        }
+        return file;
     }
 
     @Override

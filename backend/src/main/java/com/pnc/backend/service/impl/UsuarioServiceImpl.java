@@ -44,10 +44,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponse save(UsuarioRequest usuarioDTO) {
 
-        if (usuarioRepository.existsByUsername(usuarioDTO.getUsername())){
+        if (usuarioRepository.existsByUsernameIgnoreCase(usuarioDTO.getUsername())){
             throw new DuplicatedFieldException("Ese username ya esta registrado");
         }
-        if (usuarioRepository.existsByEmail(usuarioDTO.getCorreo())){
+        if (usuarioRepository.existsByEmailIgnoreCase(usuarioDTO.getCorreo())){
             throw new DuplicatedFieldException("Ese correo ya esta registrado");
         }
 

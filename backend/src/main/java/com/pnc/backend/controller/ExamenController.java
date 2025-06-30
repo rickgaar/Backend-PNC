@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,25 +29,29 @@ public class ExamenController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> saveExam(@RequestBody @Valid ExamenRequest examenRequest, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Exam created", HttpStatus.CREATED, examenService.save(examenRequest));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GeneralResponse> saveExam(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+    @PreAuthorize("hasAnyRole('admin','usuario')")
+    public ResponseEntity<GeneralResponse> getExam(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Exam found", HttpStatus.CREATED, examenService.findById(id));
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> updateExam(@RequestBody @Valid ExamenUpdateRequest examenUpdateRequest, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Exam updated", HttpStatus.OK, examenService.update(examenUpdateRequest));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<GeneralResponse> deleteQuestion(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<GeneralResponse> deleteExam(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         examenService.delete(id);
         return buildResponse("Exam deleted", HttpStatus.OK, id);
     }

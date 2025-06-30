@@ -3,6 +3,7 @@ package com.pnc.backend.service.impl;
 import com.pnc.backend.dto.request.LoginRequest;
 import com.pnc.backend.dto.request.usuario.UsuarioRequest;
 import com.pnc.backend.dto.response.usuario.UsuarioResponse;
+import com.pnc.backend.exceptions.InvalidCredentialsException;
 import com.pnc.backend.security.JwtTokenProvider;
 import com.pnc.backend.service.AuthService;
 import com.pnc.backend.service.UsuarioService;
@@ -24,20 +25,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getIdentifier(),
+                            loginRequest.getPassword()
+                    )
+            );
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getIdentifier(),
-                        loginRequest.getPassword()
-                )
-        );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return jwtTokenProvider.generateToken(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        return token;
+        } catch (Exception e) {
+            throw new InvalidCredentialsException("Credenciales incorrectas. Verifica tu usuario y contraseña.");
+        }
     }
+
 
     @Override
     @Transactional

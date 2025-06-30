@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,18 +28,21 @@ public class RespuestaOpcionMultipleController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> saveResponse(@RequestBody @Valid RespuestaOpcionMultipleRequest respuestaOpcionMultiple, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Response created", HttpStatus.CREATED, respuestaOpcionMultipleService.save(respuestaOpcionMultiple));
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> updateResponse(@RequestBody @Valid RespuestaOpcionMultipleUpdateRequest respuestaOpcionMultipleUpdateRequest, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Response updated", HttpStatus.OK, respuestaOpcionMultipleService.update(respuestaOpcionMultipleUpdateRequest));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> deleteResponse(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         respuestaOpcionMultipleService.delete(id);
         return buildResponse("Response deleted", HttpStatus.OK, id);

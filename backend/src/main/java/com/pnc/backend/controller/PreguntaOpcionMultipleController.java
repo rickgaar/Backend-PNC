@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,18 +29,21 @@ public class PreguntaOpcionMultipleController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> saveQuestion(@RequestBody @Valid PreguntaOpcionMultipleRequest preguntaOpcionMultipleRequest, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Question created", HttpStatus.CREATED, preguntaOpcionMultipleService.save(preguntaOpcionMultipleRequest));
     }
 
     @PutMapping()
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> updateQuestion(@RequestBody @Valid PreguntaOpcionMultipleUpdateRequest preguntaOpcionMultipleUpdateRequest, @RequestHeader("Authorization") String authHeader) {
 
         return buildResponse("Question updated", HttpStatus.OK, preguntaOpcionMultipleService.update(preguntaOpcionMultipleUpdateRequest));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> deleteQuestion(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         preguntaOpcionMultipleService.delete(id);
         return buildResponse("Question deleted", HttpStatus.OK, id);

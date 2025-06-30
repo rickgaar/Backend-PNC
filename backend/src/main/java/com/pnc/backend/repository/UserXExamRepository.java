@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface UserXExamRepository extends JpaRepository<UserXExam, UserExamId> {
     Optional<List<UserXExam>> findByUsuarioIdAndExamenMateriaId(Long userId, Long materiaId);
     Optional<UserXExam> findByUsuarioIdAndExamenMateriaIdAndExamenId(Long userId, Long materiaId, Long examId);
+    Optional<List<UserXExam>> findByExamenId(Long examenId);
+    Optional<UserXExam> findByExamenIdAndUsuarioId(Long examenId, Long usuarioId);
 }

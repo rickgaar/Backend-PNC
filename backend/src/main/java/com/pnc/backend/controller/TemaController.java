@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,6 +29,7 @@ public class TemaController {
     private TemaService temaService;
 
     @PostMapping(value = "/{materiaId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> crearTemaConArchivo(
             @PathVariable Long materiaId,
             @RequestPart("archivo") MultipartFile archivo,
@@ -40,27 +42,30 @@ public class TemaController {
     }
 
     @GetMapping("/{id}/archivo/view")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<ByteArrayResource> verArchivo(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) throws IOException {
 
-            TemaResponse tema = temaService.findById(id);
+        TemaResponse tema = temaService.findById(id);
 
-            byte[] contenidoArchivo = temaService.getFileByTemaId(id);
-            ByteArrayResource resource = new ByteArrayResource(contenidoArchivo);
+        byte[] contenidoArchivo = temaService.getFileByTemaId(id);
+        ByteArrayResource resource = new ByteArrayResource(contenidoArchivo);
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .contentLength(contenidoArchivo.length)
-                    .body(resource);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(contenidoArchivo.length)
+                .body(resource);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> updateTema(@PathVariable Long id, @Valid @RequestBody TemaUpdateRequest request, @RequestHeader("Authorization") String authHeader) {
-            TemaResponse tema = temaService.updateTema(id, request);
+        TemaResponse tema = temaService.updateTema(id, request);
         return buildResponse("Temas actualizado exitosamente", HttpStatus.OK, tema);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> eliminarTema(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         temaService.delete(id);
         return buildResponse("Tema eliminado exitosamente", HttpStatus.OK, null);

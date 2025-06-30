@@ -26,7 +26,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("No existe un usuario con el identificador: " + usernameOrEmail));
 
 
-        GrantedAuthority authority = new SimpleGrantedAuthority(usuario.getRol().getName());
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getName());
 
         return new User(
                 usernameOrEmail,

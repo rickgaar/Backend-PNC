@@ -7,6 +7,7 @@ import com.pnc.backend.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,6 +24,7 @@ public class UsuarioController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/whoami")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> whoami(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         String usernameOrEmail = jwtTokenProvider.getUsernameFromToken(token);
@@ -31,6 +33,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/changeAvatar")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> updateAvatar(@RequestHeader("Authorization") String authHeader, @RequestParam("avatar") String nuevoAvatar) {
 
         String token = authHeader.replace("Bearer ", "");
@@ -41,6 +44,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<GeneralResponse> delete(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         UsuarioResponse usuario = usuarioService.findById(id);
         usuarioService.delete(id);
@@ -48,6 +52,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{username}")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
     public ResponseEntity<GeneralResponse> findByUsername(@PathVariable String username, @RequestHeader("Authorization") String authHeader) {
         UsuarioResponse usuario = usuarioService.findByUsername(username);
         return buildResponse("Usuarios encontrados", HttpStatus.OK, usuario);

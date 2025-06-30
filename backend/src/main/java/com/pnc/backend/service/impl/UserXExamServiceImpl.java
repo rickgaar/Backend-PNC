@@ -8,6 +8,7 @@ import com.pnc.backend.entities.UserXExam;
 import com.pnc.backend.entities.Usuario;
 import com.pnc.backend.exceptions.ExamenNotFoundException;
 import com.pnc.backend.exceptions.UserNotFoundException;
+import com.pnc.backend.exceptions.UserXExamAlreadyExists;
 import com.pnc.backend.exceptions.UserXExamNotFoundException;
 import com.pnc.backend.repository.ExamRepository;
 import com.pnc.backend.repository.UserXExamRepository;
@@ -27,6 +28,7 @@ public class UserXExamServiceImpl implements UserXExamService {
     private final UsuarioRepository userRepository;
     private final ExamRepository examRepository;
 
+
     @Autowired
     public UserXExamServiceImpl(UserXExamRepository userXExamRepository, UsuarioRepository userRepository, ExamRepository examRepository) {
         this.userXExamRepository = userXExamRepository;
@@ -44,7 +46,10 @@ public class UserXExamServiceImpl implements UserXExamService {
         if(usuario.isEmpty()){
             throw new UserNotFoundException("User not found");
         }
-
+        Optional<UserXExam> userXExam=userXExamRepository.findByExamenIdAndUsuarioId(userXExamRequest.getExamId(),userXExamRequest.getUserId());
+        if(!userXExam.isEmpty()){
+            throw new UserXExamAlreadyExists("No se puede empezar un examen ya empezado");
+        }
         return UserXExamMapper.toDTO(userXExamRepository.save(UserXExamMapper.toEntityCreate(userXExamRequest,usuario.get(),examen.get())));
     }
 
@@ -53,6 +58,9 @@ public class UserXExamServiceImpl implements UserXExamService {
         Optional<UserXExam> userXExam=userXExamRepository.findById(UserExamId.builder().userId(userXExamUpdateRequest.getUserId()).examId(userXExamUpdateRequest.getExamId()).build());
         if(userXExam.isEmpty()){
             throw new UserXExamNotFoundException("El examen de este usuario no se encontro");
+        }
+        if(userXExam.get().getCalificacion() != null){
+            throw new UserXExamAlreadyExists("No se puede terminar un examen ya terminado");
         }
         UserXExam userXExamUpdated = UserXExamMapper.toEntityUpdate(userXExamUpdateRequest, userXExam.get().getUsuario(),userXExam.get().getExamen());
         userXExamUpdated.setDateHourBegin(userXExam.get().getDateHourBegin());
