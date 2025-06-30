@@ -41,12 +41,10 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(e, HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-
     @ExceptionHandler(ConcurrentModificationException.class)
     public ResponseEntity<ApiErrorResponse> handleConcurrentModificationException(ConcurrentModificationException e) {
-        return buildErrorResponse(e, HttpStatus.CONFLICT, "Error al modificar la relación entre usuario y materia");
+        return buildErrorResponse(e, HttpStatus.CONFLICT, e.getMessage());
     }
-
 
     @ExceptionHandler(PreguntaNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handlePreguntaNotFoundException(PreguntaNotFoundException e){
