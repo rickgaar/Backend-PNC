@@ -1,10 +1,7 @@
 package com.pnc.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -19,6 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Table(name = "examen", schema = "public")
+@ToString(exclude = {"preguntaOpcionMultipleList", "attempts"})
+@EqualsAndHashCode(exclude = {"preguntaOpcionMultipleList", "attempts"})
 public class Examen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

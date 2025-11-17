@@ -11,8 +11,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(exclude = "materias")
-@EqualsAndHashCode(exclude = "materias")
+@ToString(exclude = {"materias", "attempts"})
+@EqualsAndHashCode(exclude = {"materias","attempts"})
 @Table(name = "usuario", schema = "public")
 public class Usuario {
     @Id

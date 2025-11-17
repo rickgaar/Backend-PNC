@@ -2,10 +2,7 @@ package com.pnc.backend.entities;
 
 import com.pnc.backend.utils.id.UserExamId;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Table(name = "usuarioxexamen", schema = "public")
+@ToString(exclude = {"usuario", "examen"})
+@EqualsAndHashCode(exclude = {"usuario", "examen"})
 public class UserXExam {
 
         @EmbeddedId
