@@ -36,7 +36,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/**").permitAll() //Permits urls to be public, no authorization needed
+                            .requestMatchers("/api/**","/api/usuario/avatar/**" )
+                            .permitAll() //Permits urls to be public, no authorization needed
                             .anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
