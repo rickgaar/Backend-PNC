@@ -36,7 +36,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS
                 .authorizeHttpRequests((authorizeRequests) -> {
                     authorizeRequests
-                            .requestMatchers("/api/**").permitAll() //Permits urls to be public, no authorization needed
+                            .requestMatchers("/api/**","/api/usuario/avatar/**" )
+                            .permitAll() //Permits urls to be public, no authorization needed
                             .anyRequest().authenticated();
                 }).httpBasic(Customizer.withDefaults());
 
@@ -61,7 +62,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://learnsy-three.vercel.app"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173"));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 

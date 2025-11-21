@@ -14,8 +14,17 @@ import com.pnc.backend.utils.mapper.UsuarioMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Console;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -76,15 +85,44 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponse updateAvatar(String usernameOrEmail, String nuevoAvatar) {
-        Usuario usuario = usuarioRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username o email: " + usernameOrEmail));
+    public UsuarioResponse updateAvatarFile(String usernameOrEmail, MultipartFile file) throws IOException {
 
-        usuario.setAvatar(nuevoAvatar);
+        Usuario usuario = usuarioRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("El archivo no puede estar vacío");
+        }
+
+
+        Path uploadPath = Paths.get("uploads/avatars");
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        if (usuario.getAvatar() != null && usuario.getAvatar().startsWith("http")) {
+            usuario.setAvatar(null);
+        }
+
+
+        if (usuario.getAvatar() != null && !usuario.getAvatar().isEmpty()) {
+            Path oldAvatarPath = uploadPath.resolve(usuario.getAvatar());
+            if (Files.exists(oldAvatarPath)) {
+                Files.delete(oldAvatarPath);
+            }
+        }
+
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        Path filePath = uploadPath.resolve(filename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        usuario.setAvatar(filename);
         usuarioRepository.save(usuario);
 
         return UsuarioMapper.toDTO(usuario);
     }
+
 
 
     @Override
