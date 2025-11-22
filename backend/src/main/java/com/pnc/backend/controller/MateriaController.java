@@ -5,6 +5,7 @@ import com.pnc.backend.dto.request.materia.MateriaUpdateRequest;
 import com.pnc.backend.dto.response.GeneralResponse;
 import com.pnc.backend.dto.response.examen.ExamenResponse;
 import com.pnc.backend.dto.response.materia.MateriaResponse;
+import com.pnc.backend.dto.response.notas.MateriaExamenUsuarioResponse;
 import com.pnc.backend.dto.response.tema.TemaResponse;
 import com.pnc.backend.exceptions.MateriaNotFoundException;
 import com.pnc.backend.service.MateriaService;
@@ -113,4 +114,15 @@ public class MateriaController {
         MateriaResponse response = materiaService.findWithDetails(id);
         return buildResponse("Materia encontrada exitosamente", HttpStatus.OK, response);
     }
+
+    @GetMapping("/examenes-usuarios/{id}")
+    @PreAuthorize("hasAnyRole('admin','usuario')")
+    public ResponseEntity<GeneralResponse> getExamenesConUsuarios(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+
+        MateriaExamenUsuarioResponse response = materiaService.getExamenesConUsuarios(id);
+        return buildResponse("Exámenes y usuarios obtenidos exitosamente", HttpStatus.OK, response);
+    }
+
 }
