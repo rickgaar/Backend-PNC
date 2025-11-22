@@ -1,10 +1,7 @@
 package com.pnc.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "Pregunta_opcion_multiple", schema = "public")
+@ToString(exclude = {"examen", "respuestaOpcionMultipleList"})
+@EqualsAndHashCode(exclude = {"examen", "respuestaOpcionMultipleList"})
 public class PreguntaOpcionMultiple {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(exclude = "usuarios")
-@EqualsAndHashCode(exclude = "usuarios")
+@ToString(exclude = {"usuarios", "exams", "temas"})
+@EqualsAndHashCode(exclude = {"usuarios", "exams", "temas"})
 @Table(name = "materia", schema = "public")
 public class Materia {
     @Id

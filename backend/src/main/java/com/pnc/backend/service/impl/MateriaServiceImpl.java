@@ -4,13 +4,18 @@ import com.pnc.backend.dto.request.materia.MateriaRequest;
 import com.pnc.backend.dto.request.materia.MateriaUpdateRequest;
 import com.pnc.backend.dto.response.examen.ExamenResponse;
 import com.pnc.backend.dto.response.materia.MateriaResponse;
+import com.pnc.backend.dto.response.notas.ExamenConUsuariosResponse;
+import com.pnc.backend.dto.response.notas.MateriaExamenUsuarioResponse;
+import com.pnc.backend.dto.response.notas.UsuarioNotaResponse;
 import com.pnc.backend.dto.response.tema.TemaResponse;
 import com.pnc.backend.entities.Materia;
+import com.pnc.backend.entities.UserXExam;
 import com.pnc.backend.entities.Usuario;
 import com.pnc.backend.exceptions.DuplicatedFieldException;
 import com.pnc.backend.exceptions.MateriaNotFoundException;
 import com.pnc.backend.exceptions.UserNotFoundException;
 import com.pnc.backend.repository.MateriaRepository;
+import com.pnc.backend.repository.UserXExamRepository;
 import com.pnc.backend.repository.UsuarioRepository;
 import com.pnc.backend.service.MateriaService;
 import com.pnc.backend.utils.mapper.MateriaMapper;
@@ -19,20 +24,19 @@ import com.pnc.backend.utils.mappers.TemaMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MateriaServiceImpl implements MateriaService {
 
     private final MateriaRepository materiaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UserXExamRepository userXExamRepository;
 
-    public MateriaServiceImpl(MateriaRepository materiaRepository, UsuarioRepository usuarioRepository) {
+    public MateriaServiceImpl(MateriaRepository materiaRepository, UsuarioRepository usuarioRepository, UserXExamRepository userXExamRepository) {
         this.materiaRepository = materiaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.userXExamRepository = userXExamRepository;
     }
 
     @Override
@@ -145,5 +149,36 @@ public class MateriaServiceImpl implements MateriaService {
         Materia materia = materiaRepository.findById(id)
                 .orElseThrow(() -> new MateriaNotFoundException("Materia no encontrada"));
         return MateriaMapper.toDTOWithUsuarios(materia);
+    }
+
+
+    @Override
+    public MateriaExamenUsuarioResponse getExamenesConUsuarios(Long materiaId) {
+        Materia materia = materiaRepository.findById(materiaId)
+                .orElseThrow(() -> new MateriaNotFoundException("Materia no encontrada"));
+
+        List<ExamenConUsuariosResponse> examenesDTO = materia.getExams().stream().map(examen -> {
+            List<UserXExam> intentos = userXExamRepository.findByExamenId(examen.getId())
+                    .orElse(Collections.emptyList());
+
+            List<UsuarioNotaResponse> usuariosDTO = intentos.stream().map(intento -> UsuarioNotaResponse.builder()
+                    .usuarioId(intento.getUsuario().getId())
+                    .nombre(intento.getUsuario().getNombre())
+                    .calificacion(intento.getCalificacion())
+                    .build()).toList();
+
+            return ExamenConUsuariosResponse.builder()
+                    .examenId(examen.getId())
+                    .examenNombre(examen.getName())
+                    .descripcion(examen.getDescription())
+                    .usuarios(usuariosDTO)
+                    .build();
+        }).toList();
+
+        return MateriaExamenUsuarioResponse.builder()
+                .materiaId(materia.getId())
+                .materiaNombre(materia.getNombre())
+                .examenes(examenesDTO)
+                .build();
     }
 }

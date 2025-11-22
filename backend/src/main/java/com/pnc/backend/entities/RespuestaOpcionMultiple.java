@@ -1,10 +1,7 @@
 package com.pnc.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
@@ -12,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "Respuesta_opcion_multiple", schema = "public")
+@ToString(exclude = "preguntaOpcionMultiple")
+@EqualsAndHashCode(exclude = "preguntaOpcionMultiple")
 public class RespuestaOpcionMultiple {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

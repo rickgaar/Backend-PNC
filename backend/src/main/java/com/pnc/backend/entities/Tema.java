@@ -1,10 +1,7 @@
 package com.pnc.backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
@@ -12,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "tema")
+@ToString(exclude = "materia")
+@EqualsAndHashCode(exclude = "materia")
 public class Tema {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
