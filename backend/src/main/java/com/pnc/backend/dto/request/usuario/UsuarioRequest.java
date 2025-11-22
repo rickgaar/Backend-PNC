@@ -2,6 +2,7 @@ package com.pnc.backend.dto.request.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,5 +20,9 @@ public class UsuarioRequest {
     private String username;
 
     @NotNull(message = "La contrasena no puede ser nula")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,16}$",
+            message = "La contraseña debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas y números."
+    )
     private String contrasena;
 }
