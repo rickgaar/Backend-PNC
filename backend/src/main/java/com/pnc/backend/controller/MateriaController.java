@@ -114,7 +114,7 @@ public class MateriaController {
         MateriaResponse response = materiaService.findWithDetails(id);
         response.getUsuarios().forEach(u -> {
             if (u.getAvatar() != null && !u.getAvatar().isEmpty() && !u.getAvatar().startsWith("http")) {
-                u.setAvatar("http://localhost:8080/api/user/avatar/" + u.getAvatar());
+                u.setAvatar("https://backend-pnc-production-d8ff.up.railway.app/api/user/avatar/" + u.getAvatar());
             }
         });
         return buildResponse("Materia encontrada exitosamente", HttpStatus.OK, response);
