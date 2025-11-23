@@ -4,6 +4,7 @@ import com.pnc.backend.dto.request.materia.MateriaRequest;
 import com.pnc.backend.dto.request.materia.MateriaUpdateRequest;
 import com.pnc.backend.dto.response.examen.ExamenResponse;
 import com.pnc.backend.dto.response.materia.MateriaResponse;
+import com.pnc.backend.dto.response.notas.MateriaExamenUsuarioResponse;
 import com.pnc.backend.dto.response.tema.TemaResponse;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface MateriaService {
     MateriaResponse update(MateriaUpdateRequest materia);
     void removeUser(Long idMateria, Long idUsuario);
     MateriaResponse findWithDetails(Long id);
+    MateriaExamenUsuarioResponse getExamenesConUsuarios(Long materiaId);
+
 }
