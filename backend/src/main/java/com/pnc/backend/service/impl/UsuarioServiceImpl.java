@@ -94,6 +94,17 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new IllegalArgumentException("El archivo no puede estar vacío");
         }
 
+        String contentType = file.getContentType();
+
+        if (contentType == null ||
+                !(contentType.equals("image/png") ||
+                        contentType.equals("image/jpeg") ||
+                        contentType.equals("image/jpg") ||
+                        contentType.equals("image/webp") ||
+                        contentType.equals("image/gif"))) {
+
+            throw new IllegalArgumentException("Solo se permiten archivos de imagen (png, jpg, jpeg, webp, gif)");
+        }
 
         Path uploadPath = Paths.get("uploads/avatars");
         if (!Files.exists(uploadPath)) {
