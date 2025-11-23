@@ -38,7 +38,7 @@ public class UsuarioController {
         String usernameOrEmail = jwtTokenProvider.getUsernameFromToken(token);
         UsuarioResponse response = usuarioService.findByUsernameOrEmail(usernameOrEmail);
         if (response.getAvatar() != null && !response.getAvatar().startsWith("http")) {
-            response.setAvatar("http://localhost:8080/api/user/avatar/" + response.getAvatar());
+            response.setAvatar("http://backend-pnc-production-d8ff.up.railway.app/api/user/avatar/" + response.getAvatar());
         }
         return buildResponse("Datos obtenidos exitosamente", HttpStatus.OK, response);
     }
@@ -56,7 +56,7 @@ public class UsuarioController {
         UsuarioResponse response = usuarioService.updateAvatarFile(email, file);
 
         if (response.getAvatar() != null && !response.getAvatar().startsWith("http")) {
-            response.setAvatar("http://localhost:8080/api/user/avatar/" + response.getAvatar());
+            response.setAvatar("http://backend-pnc-production-d8ff.up.railway.app/api/user/avatar/" + response.getAvatar());
         }
 
         return buildResponse("Avatar actualizado exitosamente", HttpStatus.OK, response);
